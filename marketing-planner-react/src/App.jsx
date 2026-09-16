@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, Columns3, Download, Plus, Search, Sparkles } from 'lucide-react';
+import { CalendarDays, Columns3, Download, Image, Plus, Search, Sparkles } from 'lucide-react';
 import Kanban from './components/Kanban';
 import CalendarView from './components/CalendarView';
+import Artboards from './components/Artboards';
 import PostModal from './components/PostModal';
 import { channels, columns, initialPosts } from './lib/data';
 import { exportPlannerPDF } from './lib/pdf';
@@ -83,6 +84,7 @@ export default function App() {
       <nav>
         <button className={view === 'kanban' ? 'active' : ''} onClick={() => setView('kanban')}><Columns3 size={18}/> Kanban</button>
         <button className={view === 'calendar' ? 'active' : ''} onClick={() => setView('calendar')}><CalendarDays size={18}/> Calendário</button>
+        <button className={view === 'artboards' ? 'active' : ''} onClick={() => setView('artboards')}><Image size={18}/> Artes</button>
       </nav>
       <div className="sidebar-card">
         <small>Planejamento</small>
@@ -101,7 +103,7 @@ export default function App() {
             </select>
             <input className="project-name" value={activeProject.name} onChange={renameProject} aria-label="Nome do projeto" />
           </div>
-          <p>Organize ideias, produção, publicação e calendário editorial em um único fluxo.</p>
+          <p>{view === 'artboards' ? 'Acompanhe a produção visual do cliente por campanha e formato.' : 'Organize ideias, produção, publicação e calendário editorial em um único fluxo.'}</p>
         </div>
         <div className="top-actions">
           <button className="ghost" onClick={() => exportPlannerPDF({ posts: filtered, projectName: activeProject.name })}><Download size={17}/> Exportar PDF</button>
@@ -116,10 +118,11 @@ export default function App() {
         <div className="view-switch">
           <button className={view === 'kanban' ? 'active' : ''} onClick={() => setView('kanban')}>Kanban</button>
           <button className={view === 'calendar' ? 'active' : ''} onClick={() => setView('calendar')}>Calendário</button>
+          <button className={view === 'artboards' ? 'active' : ''} onClick={() => setView('artboards')}>Artes</button>
         </div>
       </section>
 
-      {view === 'kanban' ? <Kanban columns={activeProject.columns} posts={filtered} onMove={movePost} onEdit={openEdit} onDelete={deletePost} onAdd={openNew} onRename={renameColumn}/> : <CalendarView posts={filtered} onEdit={openEdit}/>} 
+      {view === 'kanban' ? <Kanban columns={activeProject.columns} posts={filtered} onMove={movePost} onEdit={openEdit} onDelete={deletePost} onAdd={openNew} onRename={renameColumn}/> : view === 'calendar' ? <CalendarView posts={filtered} onEdit={openEdit}/> : <Artboards posts={filtered} onEdit={openEdit}/>} 
     </main>
 
     <PostModal open={modalOpen} post={editing} onClose={() => setModalOpen(false)} onSave={savePost} onDelete={deletePost}/>
